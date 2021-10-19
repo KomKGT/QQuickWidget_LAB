@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>SwitchControl.qml</file>
+    </qresource>
+    <qresource prefix="/new">
+        <file>Switch.qml</file>
+    </qresource>
+</RCC>

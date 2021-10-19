@@ -1,0 +1,81 @@
+import QtQuick 2.0
+import QtQuick.Controls.Material 2.0
+import QtQuick.Controls 2.13
+
+Rectangle {
+    id: slot
+    property color slot_color: "#000000"    // property color slot_color = "#000000"    Global variable จะมี  property
+    property color pole_color: "#ffffff"    // property color pole_color = "#ffffff"    Global variable จะมี  property
+    property int pole_margin: 10            // property int pole_margin =  10           Global variable จะมี  property
+
+    signal clicked(bool checked); // Function Signal Prototype
+
+    function setStatus(status) {       //ฟังก์ชันนี้รับค่ามาจาก ui c++
+        state = status ? "on" : "off"
+    }
+
+    color: slot_color           //ให้ color = slot_color
+    radius: 10                  // radius = 10
+    Rectangle {
+        objectName: "pole"          //จริงๆไม่จำเป็นแต่กรณีนี้เค้าต้องการใช้ findchrild เลยต้องตั้ง
+        id: pole
+        x: parent.pole_margin       //parent จะบอกว่าเทียบกับพื้นที่เต็มห่างออกมาเท่าไร(ถ้ามี . นะ) ง่ายๆ parent คือ กรอบใหญ่
+        y: parent.pole_margin
+        width: parent.width - (2*parent.pole_margin)
+        height: (parent.height / 2) - parent.pole_margin
+        color: parent.pole_color
+        radius: parent.radius
+    }
+
+    MouseArea {
+        id: mouseArea1
+        anchors.fill: parent  //ขนาดพื้นที่เต็ม  widget
+        onClicked: {
+            parent.state = (parent.state == "off") ? "on" : "off"   //เป็นตัวกลับสถานะจาก off เป็น on
+            parent.clicked(parent.state == "on" ? true : false)     //ตัวส่งสัญญาณให้ signal function ด้านบน
+        }
+    }
+
+    state: "off"   //สถานะเริ่มต้น
+
+    states: [
+        State {
+            name: "on"
+        },
+        State {
+            name: "off"
+
+            PropertyChanges {
+                target: pole
+                y: parent.height / 2
+            }
+        }
+    ]
+
+    transitions: [
+        Transition {
+            from: "on"
+            to: "off"
+            PropertyAnimation {
+                target: pole
+                properties: "y"
+                duration: 100
+            }
+        },
+        Transition {
+            from: "off"
+            to: "on"
+            PropertyAnimation {
+                target: pole
+                properties: "y"
+                duration: 100
+            }
+        }
+    ]
+}
+
+/*##^##
+Designer {
+    D{i:0;autoSize:true;height:480;width:640}
+}
+##^##*/
